@@ -1,19 +1,19 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import Confetti from "react-confetti";
 import { useEffect, useState } from "react";
 
 export default function PaymentSuccess() {
-  const query = useSearchParams();
+  // const query = useSearchParams();
 
   const [showConfetti, setShowConfetti] = useState(true);
 
-  const name = query.get("name");
-  const amount = query.get("amount");
-  const orderId = query.get("orderId");
+  // const name = query.get("name");
+  // const amount = query.get("amount");
+  // const orderId = query.get("orderId");
 
   useEffect(() => {
     setTimeout(() => setShowConfetti(false), 4000);
