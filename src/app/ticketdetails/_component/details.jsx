@@ -1,5 +1,12 @@
 "use client";
+import paymentApi from "@/api/payment.api";
+import { useRouter } from "next/navigation";
+
 import { useState } from "react";
+import { toast } from "react-toastify";
+
+
+
 
 export default function EventDetailsPage({event}) {
   const [qty, setQty] = useState(1);
@@ -7,31 +14,96 @@ export default function EventDetailsPage({event}) {
   const [option, setOption] = useState("");
 
   const tshirtPrice = 10;
-  const batPrice = 20; 
+  const batPrice = 20;
+  const productId = "69067449d302a359ab155716" 
+
+
+   
+//     const payload = {
+//     {
+//   eventId: ;
+//   productId: productId;
+//   quantity:qty
+// }}
+
+const getTotalWithOption = () => {
+  const total = event?.tickets?.[0]?.price ? qty * event.tickets[0].price : 0;
+  let optionPrice = 0;
+
+  if (option === "T-Shirt") optionPrice = tshirtPrice;
+  else if (option === "Bat") optionPrice = batPrice;
+
+  return total + optionPrice * qty;
+};
+
+const handlePayment = async () => {
+  const payload = {
+    eventId: event?._id,
+    productId: productId,
+    quantity: qty,
+    price: getTotalWithOption()
+  };
+
+  try {
+    const res = await paymentApi.createPayment(payload);
+    console.log("response of api -----", res);
+
+    if (!res || res?.status?.toLowerCase() !== "success") {
+      return toast.error(res?.message || "Payment failed ❌");
+    }
+    console.log(res.data.url)
+
+     toast.success("Payment Successful ✅");
+
+      window.location.href = res.data.url;
+    // goToSuccessPage();
+  
+    
+
+  } catch (error) {
+    console.log("Payment Error:", error);
+    toast.error("Something went wrong ❌");
+  }
+};
+
+const handleConfirm = () => {
+  if (!option) {
+    toast("Please select a purchase option (Required)");
+    return;
+  }
+
+  toast(`✅ Ticket Added\nOption: ${option}\nQty: ${qty}`);
+  setShowOptions(false);
+  setOption("");
+
+  handlePayment(); // ✅ Only call payment
+};
+
+
+
+  const router = useRouter();
+
+
+  const goToSuccessPage = () => {
+    router.push("/success");
+  };
+
   
 
   const handleTicketClick = () => {
     setShowOptions(true);
   };
 
-  const getTotalWithOption = () => {
-    const total = event?.tickets?.[0]?.price ? qty * event.tickets[0].price : ""
-    let optionPrice = 0;
-    if (option === "T-Shirt") optionPrice = tshirtPrice;
-    else if (option === "Bat") optionPrice = batPrice;
-    return total + optionPrice*qty;
-  }
+  
 
-  const handleConfirm = () => {
-    if (!option) {
-      alert("Please select a purchase option (Required)");
-      return;
-    }
-    alert(`✅ Ticket Added\nOption: ${option}\nQty: ${qty}`);
-    setShowOptions(false);
-    setOption("");
-  };
-
+  // const Confirm = ()=>{
+  //   const router = useRouter();
+  //   const handle= () =>{
+  //   router.push("/success");
+  //   }
+    
+  // }
+  
   function formatEventTime(startStr, endStr) {
     const start = new Date(startStr);
     const end = new Date(endStr);
@@ -141,9 +213,11 @@ export default function EventDetailsPage({event}) {
                   <option value="Bat">Bat</option>
                 </select>
 
-                <button
+                <button 
                   className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700"
-                  onClick={handleConfirm}
+                  onClick={() => {
+        handleConfirm();  
+      }}
                 >
                   Confirm
                 </button>
