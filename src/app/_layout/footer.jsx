@@ -26,13 +26,13 @@ const Footer = () => {
           </p>
           {/* Social Icons */}
           <div className="flex gap-5 mt-8 text-[22px]">
-            <a href="#" className="!text-[#00175f] hover:text-[#00175f]">
+            <a href="https://www.facebook.com/people/Cricket-Lovers-Global-Academy/61559836160887/" className="!text-[#00175f] hover:text-[#00175f]">
               <FaFacebookF />
             </a>
-            <a href="#" className="!text-[#00175f] hover:text-[#00175f]">
+            <a href="https://www.instagram.com/cricketloversglobal/" className="!text-[#00175f] hover:text-[#00175f]">
               <FaInstagram />
             </a>
-            <a href="#" className="!text-[#00175f] hover:text-[#00175f]">
+            <a href="https://x.com/i/flow/login?redirect_after_login=%2Fsearch%3Fq%3D%2523CricketLoversGlobal%26src%3Dhashtag_click%26f%3Duser" className="!text-[#00175f] hover:text-[#00175f]">
               <FaTwitter />
             </a>
           </div>

@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import Slider from "react-slick";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -44,7 +45,7 @@ const Care2 = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center justify-between">
         {/* LEFT TEXT */}
         <div className="order-2 md:order-1 text-left space-y-6 px-2 md:px-0">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold uppercase leading-tight tracking-tight text-[#0d0d36]">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold uppercase leading-tight tracking-tight text-[#0d0d36]">
             Supporting<br />Under<br />
             Privilege / Refugee<br />
             Kids in the UK
@@ -67,10 +68,11 @@ const Care2 = () => {
         {/* RIGHT SLIDER */}
         <div className="order-1 md:order-2 relative w-full overflow-hidden rounded-lg shadow-lg hover:scale-110 transition-all duration-100">
           <Slider {...settings}>
-            {[1, 2, 3].map((i) => (
+            
+              {[Imgmembership.imgcare6,Imgmembership.imgcare7,Imgmembership.imgcare8,Imgmembership.imgcare9].map((img, i) => (
               <div key={i}>
                 <Image
-                  src={Imgmembership.imgPassion4}
+                src={img}
                   alt={`CSR Initiative ${i}`}
                   className="w-full h-[250px] sm:h-[350px] md:h-[430px] lg:h-[500px] object-cover rounded-lg"
                 />

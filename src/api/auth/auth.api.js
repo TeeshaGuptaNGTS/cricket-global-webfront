@@ -84,6 +84,17 @@ class Auth extends HttpClient {
       data:reqBody,
     })
   }
+  profileImage = async (reqBody) => {
+  return this.instance({
+    method: ApiRoutes.auth.updateImage.Method,
+    url: ApiRoutes.auth.updateImage.Endpoint,
+    data: reqBody,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
   getEventHistory = async () =>{
     return this.instance({
       method: ApiRoutes.auth.eventHistory.Method,

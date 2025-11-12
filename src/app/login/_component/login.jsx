@@ -7,7 +7,13 @@ import { setTokenLocal, setUserLocal } from "@/utils/localStorage.util";
 import Image from "next/image";
 import { toast } from "react-toastify";
 
+// Redux Import here 
+import { useDispatch } from "react-redux";
+import { updateUser, updateToken } from "@/redux/redux-slice/user.slice";
+
 export default function Login() {
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -16,42 +22,63 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (!email || !password) return setError("All fields are required ❌");
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) return setEmailError("Please enter a valid email");
+
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email))
+      return setEmailError("Please enter a valid email");
 
     setError("");
     setLoading(true);
 
     try {
+      console.log("email, password", email, password);
+
       const res = await authInstance.login({ email, password });
       setLoading(false);
-      console.log("Login Response:", res);
-      if (res?.status.toLowerCase() != "success") return setError(res?.message || "Login failed ❌");
-       
+
+      if (res?.status?.toLowerCase() != "success")
+        return setError(res?.message || "Login failed ❌");
+
+      // ✅ LocalStorage Save
       setTokenLocal(res?.data?.token);
       setUserLocal(res?.data?.user);
-            toast.success("Login Successful ");
+
+      // ✅ Redux State Update
+      dispatch(updateToken(res?.data?.token));
+      dispatch(updateUser(res?.data?.user));
+
+      toast.success("Login Successful ✅");
+
       window.location.href = "/";
     } catch {
-      // setError("Something went wrong ");
       setLoading(false);
+      setError("Something went wrong ❌");
     }
   };
 
   const handleForgetPass = async () => {
-    if (!email) return setError("email is required ");
+    if (!email) return setError("Email is required ❌");
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) return setEmailError("Please enter a valid email");
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email))
+      return setEmailError("Please enter a valid email");
 
     try {
       const res = await authInstance.forgetPass({ email });
 
-      if (!res?.success) return setError(res?.message || "Request failed ");
-        toast("Reset Email Send Successfully ");
+      if  (res?.status?.toLowerCase() !== "success")
+
+        return setError(res?.message || "Request failed ❌");
+
+      toast("Reset Email Sent Successfully ✅");
     } catch {
-      toast("Something went wrong ");
+      toast("Something went wrong ❌");
     }
   };
 
@@ -83,7 +110,9 @@ export default function Login() {
                 const emailRegex =
                   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 setEmailError(
-                  !emailRegex.test(val) ? "Please enter a valid email" : ""
+                  !emailRegex.test(val)
+                    ? "Please enter a valid email"
+                    : ""
                 );
               }}
               required

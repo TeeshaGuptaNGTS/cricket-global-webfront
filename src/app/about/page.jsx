@@ -5,6 +5,7 @@ import Story from "./_component/story";
 import Vision from "./_component/vision";
 import Testimonial from "./_component/testinomials";
 import Testimonialbanner from "./_component/testinomialsBanner";
+import News from "../home/_component/news";
 
 export default function about() {
   return (
@@ -14,6 +15,7 @@ export default function about() {
       <Vision/>
       <Testimonial/>
       <Testimonialbanner/>
+      <News/>
     </>
   );
 }

@@ -15,11 +15,13 @@ const Navbar = () => {
   const userToken = getTokenLocal();
   const router = useRouter();
 
+  // ✅ PATCH 1 — Add profilePic
+  const profilePic = userData?.profileImage || "/default-avatar.png";
+
   const handleLogout = () => {
-    logout(router); // ✅ pass router.push as "history"
+    logout(router);
     setShowDropdown(false);
   };
-
 
   return (
     <nav className="bg-[#001B5E] text-white py-4 relative w-full z-50">
@@ -37,30 +39,13 @@ const Navbar = () => {
 
         {/* Desktop Nav Links */}
         <div className="hidden lg:flex space-x-8 text-l font-normalbold">
-          <Link href="/about" className="hover:text-green-400">
-            ABOUT
-          </Link>
-          <Link href="/cares" className="hover:text-green-400">
-            CLG CARES
-          </Link>
-          <Link href="/gallery" className="hover:text-green-400">
-            GALLERY
-          </Link>
-          <Link href="/membership" className="hover:text-green-400">
-            MEMBERSHIP
-          </Link>
-          <Link href="/events" className="hover:text-green-400">
-            EVENTS
-          </Link>
-          <Link
-            href="https://clgacademy.co.uk/"
-            className="hover:text-green-400"
-          >
-            CLG ACADEMY
-          </Link>
-          <Link href="/contact" className="hover:text-green-400">
-            CONTACT
-          </Link>
+          <Link href="/about" className="hover:text-green-400">ABOUT</Link>
+          <Link href="/cares" className="hover:text-green-400">CLG CARES</Link>
+          <Link href="/gallery" className="hover:text-green-400">GALLERY</Link>
+          <Link href="/membership" className="hover:text-green-400">MEMBERSHIP</Link>
+          <Link href="/events" className="hover:text-green-400">EVENTS</Link>
+          <Link href="https://clgacademy.co.uk/" className="hover:text-green-400">CLG ACADEMY</Link>
+          <Link href="/contact" className="hover:text-green-400">CONTACT</Link>
         </div>
 
         {/* Auth Button / Dropdown */}
@@ -70,15 +55,25 @@ const Navbar = () => {
               onClick={() => setShowDropdown(!showDropdown)}
               className="flex flex-col items-end bg-green-50 border border-green-600 text-green-800 px-6 py-2 rounded-full focus:outline-none hover:bg-green-100 transition"
             >
+              {/* ✅ PATCH 2 — Insert Profile Image */}
               <div className="flex items-center gap-2">
+
+                {/* ✅ PROFILE IMAGE ADDED */}
+                <Image
+                  src={profilePic}
+                  width={36}
+                  height={36}
+                  alt="User"
+                  className="rounded-full border border-green-600 object-cover"
+                />
+
                 <div className="text-right">
-                  <span className="text-sm font-medium block">
-                    {userData.email}
-                  </span>
+                  
                   <span className="text-base font-semibold">
                     {userData.firstName} {userData.lastName}
                   </span>
                 </div>
+
                 <ChevronDown
                   className={`transition-transform ${
                     showDropdown ? "rotate-180" : ""
@@ -98,7 +93,7 @@ const Navbar = () => {
                 >
                   Profile
                 </Link>
-               
+
                 <Link
                   href="/event-history"
                   className="block px-4 py-2 hover:bg-green-50 hover:text-green-700"
@@ -106,7 +101,8 @@ const Navbar = () => {
                 >
                   Event History
                 </Link>
-                 <button
+
+                <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 hover:text-red-700 border-t border-green-100"
                 >
@@ -136,46 +132,44 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden bg-[#001B5E] text-center space-y-4 py-6">
-          <Link href="/about" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            ABOUT
-          </Link>
-          <Link href="/cares" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            CLG CARES
-          </Link>
-          <Link href="/gallery" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            GALLERY
-          </Link>
-          <Link href="/membership" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            MEMBERSHIP
-          </Link>
-          <Link href="/events" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            EVENTS
-          </Link>
-          <Link href="https://clgacademy.co.uk/" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            CLG ACADEMY
-          </Link>
-          <Link href="/contact" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>
-            CONTACT
-          </Link>
+          <Link href="/about" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>ABOUT</Link>
+          <Link href="/cares" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>CLG CARES</Link>
+          <Link href="/gallery" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>GALLERY</Link>
+          <Link href="/membership" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>MEMBERSHIP</Link>
+          <Link href="/events" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>EVENTS</Link>
+          <Link href="https://clgacademy.co.uk/" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>CLG ACADEMY</Link>
+          <Link href="/contact" className="block hover:text-green-400" onClick={() => setIsOpen(false)}>CONTACT</Link>
 
           {/* Mobile Auth Display */}
           {userToken && userData ? (
             <div className="flex flex-col items-center text-green-400 font-semibold py-3">
+
+              {/* ✅ Mobile bhi profile pic chahiye? */}
+              <Image
+                src={profilePic}
+                width={60}
+                height={60}
+                alt="User"
+                className="rounded-full border border-green-600 object-cover mb-2"
+              />
+
               <span className="text-sm">{userData.email}</span>
               <span className="text-base">
                 {userData.firstName} {userData.lastName}
               </span>
+
               <div className="flex flex-col gap-1 mt-2">
                 <Link href="/profile" className="text-sm hover:text-white" onClick={() => setIsOpen(false)}>
                   Profile
                 </Link>
-               
+
                 <Link href="/event-history" className="text-sm hover:text-white" onClick={() => setIsOpen(false)}>
                   Event History
                 </Link>
-                 <Link  className="text-sm hover:text-white" onClick={() => setIsOpen(false)}>
+
+                <button className="text-sm hover:text-white" onClick={handleLogout}>
                   Logout
-                </Link>
+                </button>
               </div>
             </div>
           ) : (

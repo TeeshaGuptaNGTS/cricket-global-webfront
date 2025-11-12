@@ -1,11 +1,18 @@
 "use client";
 import authInstance from "@/api/auth/auth.api";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { logoimg } from "@/shared/images";
 import { toast } from "react-toastify";
 
+// ✅ Redux imports
+import { useDispatch } from "react-redux";
+import { updateUser, updateToken } from "@/redux/redux-slice/user.slice";
+import { setTokenLocal, setUserLocal } from "@/utils/localStorage.util";
+
 export default function Signup() {
+  const dispatch = useDispatch();
+
   const countries = [
     { code: "", name: "Select your country" },
     { code: "India", name: "India" },
@@ -26,7 +33,6 @@ export default function Signup() {
   const [gender, setGender] = useState("");
   const [country, setCountry] = useState("");
   const [email, setEmail] = useState("");
-
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +59,7 @@ export default function Signup() {
       country,
       email,
       password,
-      dateOfBirth
+      dateOfBirth,
     };
 
     try {
@@ -62,11 +68,18 @@ export default function Signup() {
 
       if (!res?.success) {
         toast.success(res?.message);
-         window.location.href = "/login";
-      }
 
-      // toast("Signup Successful ");
-     
+        // ✅ LocalStorage save
+        setUserLocal(res?.data?.user);
+        setTokenLocal(res?.data?.token);
+
+        // ✅ Redux save
+        dispatch(updateUser(res?.data?.user));
+        dispatch(updateToken(res?.data?.token));
+
+        window.location.href = "/";
+        return;
+      }
     } catch (err) {
       console.error(err);
       setError("Something went wrong ❌");
@@ -165,25 +178,35 @@ export default function Signup() {
               />
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="text-left">
               <label className="block font-semibold mb-1 text-sm text-black">EMAIL</label>
               <input
                 type="email"
                 placeholder="Enter email"
-                className={`w-full p-2 border rounded-md outline-none ${emailError ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full p-2 border rounded-md outline-none ${
+                  emailError ? "border-red-500" : "border-gray-300"
+                }`}
                 value={email}
                 onChange={(e) => {
                   const val = e.target.value.trim().toLowerCase();
                   setEmail(val);
-                  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                  setEmailError(!regex.test(val) ? "Please enter a valid email" : "");
+                  const regex =
+                    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                  setEmailError(
+                    !regex.test(val)
+                      ? "Please enter a valid email"
+                      : ""
+                  );
                 }}
                 required
               />
-              {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
+              {emailError && (
+                <p className="text-red-500 text-xs">{emailError}</p>
+              )}
             </div>
+
             <div className="text-left">
               <label className="block font-semibold mb-1 text-sm text-black">
                 Date of Birth
@@ -191,20 +214,19 @@ export default function Signup() {
               <input
                 type="date"
                 placeholder="Select date of birth"
-                className={`w-full p-2 border rounded-md outline-none ${dobError ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full p-2 border rounded-md outline-none ${
+                  dobError ? "border-red-500" : "border-gray-300"
+                }`}
                 value={dateOfBirth}
                 onChange={(e) => {
                   const val = e.target.value;
                   setDateOfBirth(val);
-
-                  // Example validation: must be in the past
-                  // const today = new Date().toISOString().split("T")[0];
-                  // setDobError(val >= today ? "Date of birth must be in the past" : "");
                 }}
                 required
               />
-              {dobError && <p className="text-red-500 text-xs">{dobError}</p>}
+              {dobError && (
+                <p className="text-red-500 text-xs">{dobError}</p>
+              )}
             </div>
           </div>
 

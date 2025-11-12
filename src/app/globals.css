@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 .slick-slider {
   display: block !important;
 }
@@ -9,6 +8,16 @@
   overflow: hidden !important;
 }
 .slick-track { display: flex !important; }
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 
 
 /* 

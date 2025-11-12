@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { images } from "@/shared/images";
+import { imagesmember } from "@/shared/images";
 
 const Membership1 = () => {
   
@@ -10,16 +10,16 @@ const Membership1 = () => {
   // Change background image every 1 second
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCurrentIndex((prev) => (prev + 1) % imagesmember.length);
     }, 1000);
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [imagesmember.length]);
 
   return (
     <div
       className="relative flex items-center justify-center text-center text-white h-[400px] transition-all duration-700 ease-in-out"
       style={{
-        backgroundImage: `url(${images[currentIndex]})`,
+        backgroundImage: `url(${imagesmember[currentIndex]})`,
         // backgroundImage: `url(${homepage1[currentImage]})`,,
         backgroundSize: "cover",
         backgroundPosition: "center",

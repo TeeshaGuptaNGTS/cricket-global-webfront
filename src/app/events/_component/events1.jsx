@@ -1,132 +1,198 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Search, CalendarDays } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  CalendarDays,
+  MapPin,
+} from "lucide-react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import Image from "next/image";
 import eventApi from "@/api/events.api";
+import { useRouter } from "next/navigation";
 
-const EventList = () => {
+const EventPage = () => {
+  const router = useRouter();
+
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [sliderEvents, setSliderEvents] = useState([]); // only first 4 upcoming
+
   const [filterType, setFilterType] = useState("all");
   const [searchText, setSearchText] = useState("");
-  const [page, setpage] = useState(1);
+  const [page] = useState(1);
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [current, setCurrent] = useState(0);
 
-  function formatDate(dateString) {
-  const date = new Date(dateString);
+  const nextSlide = () => setCurrent((current + 1) % events.length);
+  const prevSlide = () =>
+    setCurrent((current - 1 + events.length) % events.length);
+  const goToSlide = (index) => setCurrent(index);
 
-  const day = date.toLocaleDateString("en-US", { weekday: "short" }); // Mon
-  const dayNumber = date.getDate(); // 2
-  const monthYear = date.toLocaleDateString("en-US", { month: "short", year: "numeric" }); // Nov 2026
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  return {
-    dayNumber,
-    day,
-    monthYear,
+  //  Auto Slide
+  useEffect(() => {
+    if (sliderEvents.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % sliderEvents.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [sliderEvents]);
+
+  const fetchEvents = async (searchValue = "") => {
+    try {
+      if (searchValue === "") searchValue = searchText;
+
+      const res = await eventApi.getAllEvents({
+        page,
+        limit: 10,
+        search: searchValue,
+      });
+
+      if (res?.status.toLowerCase() !== "success")
+        return alert(res?.message || "Something went wrong ❌");
+
+      setEvents(res.data);
+      // new logic
+      //  Show all events in grid
+      setEvents(res.data);
+
+      //  Filter only first 4 upcoming for slider
+      const today = new Date();
+
+      const upcomingEvents = res.data
+        .filter((event) => new Date(event.startDate) >= today)
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        .slice(0, 5);
+
+      setSliderEvents(
+        upcomingEvents.length > 0 ? upcomingEvents : res.data.slice(0, 5)
+      );
+    } catch (error) {
+      console.log("Error fetching events:", error);
+    }
   };
-}
+  // console.log("bannerimage------------",images)
 
-function formatEventTime(startStr, endStr) {
-  const start = new Date(startStr);
-  const end = new Date(endStr);
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    fetchEvents(value);
+  };
 
-
-  const date = start.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  const startTime = start.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "numeric"
-  });
-
-  const endTime = end.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "numeric"
-  });
-
-  return `${date} @ ${startTime.toLowerCase()} - ${endTime.toLowerCase()}`;
-}
-
-useEffect(() => {
-  fetchEvents();
-}, []); 
-
-const fetchEvents= async (searchValue = "")=>{
-  try {
-    if(searchValue==""){
-      console.log("searchValue is empty so set searchText",searchText)
-      searchValue=searchText
-    }
-    const res = await eventApi.getAllEvents({ page: page, limit: 10, search: searchValue});
-    
-
-    if (res?.status.toLowerCase() != "success") return alert(res?.message || "Something went wrong, please try again later❌");
-    const currentEvent=res.data
-    
-    for(let i=0 ;i<currentEvent.length;i++){
-      const formatedDate= formatDate(currentEvent[i].startDate)
-      currentEvent[i].day=formatedDate.day
-      currentEvent[i].date=formatedDate.dayNumber
-      currentEvent[i].monthYear=formatedDate.monthYear
-      currentEvent[i].dateTime=formatEventTime(currentEvent[i].startDate, currentEvent[i].endDate)
-    }
-    setEvents(currentEvent)
-    applyFilters(currentEvent)
-  } catch(error) {
-    console.log("Error fetching events:", error);
-        alert("Something went wrong ❌");
-  }
-}
-
-const applyFilters = (eventsList, ftype) => {
-  if (!eventsList || eventsList.length === 0) {
-    eventsList = events;
-  }
-  let updatedEvents = [...eventsList];
-  ftype = ftype || filterType;
-  //filter by type
-  if (ftype === "free") {
-    updatedEvents = updatedEvents.filter(event => event.eventType.toLowerCase() !== "paid");
-  } else if (ftype === "paid") {
-    updatedEvents = updatedEvents.filter(event => event.eventType.toLowerCase() === "paid");
-  }
-  setFilteredEvents(updatedEvents);
-}
-const handleSearch = (e) => {
-  const value = e.target.value;
-  setSearchText(value);
-  fetchEvents(value); 
-};
-
-  // Handle Filter Change
   const handleFilterChange = (value) => {
     setFilterType(value);
+    const filtered =
+      value === "free"
+        ? events.filter((event) => event.eventType?.toLowerCase() !== "paid")
+        : value === "paid"
+        ? events.filter((event) => event.eventType?.toLowerCase() === "paid")
+        : events;
 
-    // API call yaha lagega ✅
-    console.log("Selected Filter:", value);
-    applyFilters(null, value);
-    // Example API (jab tum endpoint doge)
-    // fetch(`/api/events?type=${value}`)
-    //   .then(res => res.json())
-    //   .then(data => setEvents(data))
-
-
+    setEvents(filtered);
   };
+  console.log("image-------", events[current]?.bannerImage);
 
   return (
     <section className="min-h-full bg-white px-4 md:px-16 py-10 text-gray-800 relative">
-      
-      {/* Search */}
+      {/*  Slider Section */}
+      <section>
+        {sliderEvents.length > 0 && (
+          <div className="w-full bg-gradient-to-b from-gray-200 to-white py-10 mt-10 mb-10">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 px-4">
+              <div className="flex-1">
+                <p className="text-m font-semibold mb-2 text-gray-700 flex items-center gap-2">
+                  <CalendarDays size={18} className="text-gray-700" />
+                  {sliderEvents[current]?.startDate &&
+                    new Date(events[current]?.startDate).toDateString()}
+                </p>
+
+                <h1 className="text-4xl font-extrabold leading-tight mb-3">
+                  {sliderEvents[current]?.title}
+                </h1>
+                <p className="text-lg text-gray-600 mb-2 flex items-center gap-2">
+                  <MapPin size={16} className="text-red-500" />
+                  {sliderEvents[current]?.venue}
+                </p>
+
+                <p className="text-lg font-semibold mb-6 flex gap-2 flex-wrap">
+  {sliderEvents[current]?.tickets?.length > 0 ? (
+    sliderEvents[current].tickets
+      .map((t) => `${t.type.charAt(0).toUpperCase() + t.type.slice(1)} €${t.price}`)
+      .join(" • ")
+  ) : (
+    "Free Entry"
+  )}
+</p>
+
+
+                <button
+                  onClick={() =>
+                    router.push(`/ticketdetails/${sliderEvents[current]._id}`)
+                  }
+                  className="bg-green-600 hover:bg-green-700 text-white px-7 py-2 rounded-lg text-lg font-semibold"
+                >
+                  Buy tickets
+                </button>
+              </div>
+
+              <div className="relative flex-1 flex justify-center py-14">
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                >
+                  <ChevronLeft />
+                </button>
+
+                {/* {events[current]?.bannerImage || events[current]?.[0] */}
+                <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-xl">
+                  <img
+                    src={
+                      sliderEvents[current]?.bannerImage ||
+                      sliderEvents[current]?.images?.[0] ||
+                      "/placeholder.png"
+                    }
+                    alt="Event poster"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                >
+                  <ChevronRight />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-6 gap-2">
+              {sliderEvents.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goToSlide(idx)}
+                  className={`w-2 h-2 rounded-full ${
+                    idx === current ? "bg-black" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/*  Search Box */}
       <div className="flex flex-col md:flex-row items-center justify-between border border-gray-300 rounded-lg shadow-sm py-3 px-4 gap-4">
         <div className="flex items-center w-full md:w-2/3 border border-gray-300 rounded-lg px-3 py-2">
           <Search className="text-gray-400 mr-2" size={18} />
-          <input 
-
+          <input
             type="text"
             value={searchText}
             onChange={handleSearch}
@@ -134,29 +200,30 @@ const handleSearch = (e) => {
             className="w-full outline-none text-sm md:text-base"
           />
         </div>
-        <button className="bg-[#551FFF] text-white px-5 py-2 rounded-md text-sm md:text-base hover:bg-[#4513e0] transition cursor-pointer"
-        onClick={() => {fetchEvents("")}}>
+
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md text-sm md:text-base  transition cursor-pointer"
+          onClick={() => fetchEvents("")}
+        >
           Find Events
         </button>
       </div>
-
-      {/* Filter & Calendar */}
+      {/*  Filters & Calendar */}
       <div className="flex items-center justify-between mt-6 border-b border-gray-300 pb-2 relative">
         <div className="flex items-center gap-4">
-          <button className="p-2 rounded-full hover:bg-gray-100">
+          <button className="p-1 rounded-full hover:bg-gray-100">
             <ChevronLeft size={20} />
           </button>
-          <button className="p-2 rounded-full hover:bg-gray-100">
+          <button className="p-1 rounded-full hover:bg-gray-100">
             <ChevronRight size={20} />
           </button>
 
-          {/* ✅ Filter Dropdown */}
           <select
-            className="border px-3 py-1 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+            className="bg-green-600 hover:bg-green-700 text-white px-2 py-2  rounded-md text-sm md:text-base transition cursor-pointer"
             value={filterType}
             onChange={(e) => handleFilterChange(e.target.value)}
           >
-            <option value="all">All Entry</option>
+            <option value="all">Filter -</option>
             <option value="free">Free Entry</option>
             <option value="paid">Paid Entry</option>
           </select>
@@ -166,54 +233,93 @@ const handleSearch = (e) => {
           className="flex items-center gap-2 cursor-pointer relative"
           onClick={() => setShowCalendar(!showCalendar)}
         >
-          <h2 className="text-xl md:text-2xl font-semibold">Upcoming</h2>
+          <h2 className="text-xl md:text-2xl sm:m font-semibold">Upcoming</h2>
           <CalendarDays size={20} className="text-gray-600" />
-          <span className="text-gray-500 text-lg">{showCalendar ? "▴" : "▾"}</span>
+          <span className="text-gray-500 text-lg">
+            {showCalendar ? "▴" : "▾"}
+          </span>
 
           {showCalendar && (
             <div className="absolute top-10 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2">
-              <Calendar
-                onChange={setSelectedDate}
-                value={selectedDate}
-                className="rounded-lg"
-              />
+              <Calendar onChange={setSelectedDate} value={selectedDate} />
             </div>
           )}
         </div>
       </div>
+      <section>
+        {/*  Events Grid Section */}
+        <div className="mt-14 max-w-7xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">Events</h2>
 
-      {/* Event List */}
-      <div className="mt-5 border-t border-gray-200 pt-4">
-        {filteredEvents.map((event) => (
-          <div key={event._id} className="mb-10 border-b border-gray-200 pb-6">
-            <p className="text-gray-500 text-sm md:text-base mb-4">{event.monthYear}</p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {events.length === 0
+              ? // 🔄 Shimmer Loading Cards (4)
+                [...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-200 animate-pulse rounded-2xl h-80"
+                  ></div>
+                ))
+              : events.map((event) => (
+                  <div
+                    key={event?._id}
+                    className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition overflow-hidden cursor-pointer flex flex-col relative group"
+                    onClick={() => router.push(`/ticketdetails/${event?._id}`)}
+                  >
+                    <div className="w-full h-60 overflow-hidden rounded-xl">
+                      <img
+                        src={
+                          event?.bannerImage ||
+                          event?.images?.[0] ||
+                          "/placeholder.png"
+                        }
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                    </div>
 
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
-              <div className="flex flex-col items-center w-20">
-                <p className="uppercase text-xs text-gray-500">{event.day}</p>
-                <h3 className="text-3xl font-bold text-gray-800">{event.date}</h3>
-              </div>
+                    <div className="p-4 flex flex-col h-full">
+                      <p className="text-xs font-medium text-emerald-600 mb-1">
+                        {new Date(event?.startDate).toDateString()}
+                      </p>
 
-              <div className="flex-1">
-                <p className="text-sm text-gray-500">{event.dateTime}</p>
-                <a href={event.ticketsLink} className="text-lg md:text-2xl font-semibold mt-2 mb-4 text-gray-900 hover:underline">
-                  {event.title}
-                </a>
-                <p className="text-sm md:text-base text-gray-700 mt-3">
-                  <strong>{event.venue.split("—")[0]}</strong> — {event.venue.split("—")[1]}
-                </p>
-                <p className="text-sm md:text-base text-gray-600 mt-2 leading-relaxed tracking-normal">{event.description}</p>
+                      <h3 className="font-semibold text-[16px] leading-tight line-clamp-2 mb-1">
+                        {event.title}
+                      </h3>
 
-                <a href={`/ticketdetails/${event._id}`} className="inline-block mt-3 text-blue-600 font-medium hover:underline">
-                  Get Tickets
-                </a>
-              </div>
-            </div>
+                      <p className="text-gray-500 text-sm">{event.venue}</p>
+
+                      <div className="mt-2 text-gray-900 font-semibold text-[15px]">
+  {event?.tickets?.length > 0 ? (
+    event.tickets.map((t, i) => (
+      <p key={i}>
+        {t.type.charAt(0).toUpperCase() + t.type.slice(1)}: €{t.price}
+      </p>
+    ))
+  ) : (
+    <p>Free Entry</p>
+  )}
+</div>
+
+
+                      {/* 🎟️ Buy Button Fixed Bottom */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/ticketdetails/${event._id}`);
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-semibold mt-auto group-hover:scale-105 transition duration-300 cursor-pointer"
+                      >
+                        Buy tickets
+                      </button>
+                    </div>
+                  </div>
+                ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
     </section>
   );
 };
 
-export default EventList;
+export default EventPage;

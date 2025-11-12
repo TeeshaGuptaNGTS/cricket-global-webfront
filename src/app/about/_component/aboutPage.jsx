@@ -1,6 +1,10 @@
+"use client"
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const Aboutpage = () => {
+    const router = useRouter();
+  
   return (
     <section className="bg-[#f5f7fc] text-[#1a1a40] py-8 px-6 md:px-16 lg:px-32 text-center">
       {/* Title */}
@@ -34,7 +38,7 @@ const Aboutpage = () => {
 
       {/* Button */}
       <div className="mt-10">
-        <button className="bg-green-600 hover:bg-white hover:text-green-400 hover:border-2 hover:border-green-400 text-white font-semibold px-10 py-3 rounded-full shadow-md transition-all duration-200">
+        <button onClick={() => router.push("/signup")} className="bg-green-600 hover:bg-white hover:text-green-400 hover:border-2 hover:border-green-400 text-white font-semibold px-10 py-3 rounded-full shadow-md transition-all duration-200">
           SIGN UP
         </button>
       </div>

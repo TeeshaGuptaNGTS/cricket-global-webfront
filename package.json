@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.10.1",
     "axios": "^1.13.1",
+    "build": "^0.1.4",
     "framer-motion": "^12.23.24",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.552.0",
@@ -18,8 +20,10 @@
     "react-calendar": "^6.0.0",
     "react-confetti": "^6.4.0",
     "react-countup": "^6.5.3",
+    "react-datepicker": "^8.8.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.5",
     "react-slick": "^0.31.0",
     "react-toastify": "^11.0.5",

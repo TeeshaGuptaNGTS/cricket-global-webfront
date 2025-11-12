@@ -87,7 +87,7 @@ const Home = () => {
           <button onClick={() => router.push("/signup")} className="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-full cursor-pointer">
             SIGN UP NOW
           </button>
-          <button className="border-2 border-white hover:bg-white hover:text-black font-semibold px-8 py-3 rounded-full transition-all cursor-pointer">
+          <button onClick={() => router.push("/about")} className="border-2 border-white hover:bg-white hover:text-black font-semibold px-8 py-3 rounded-full transition-all cursor-pointer">
             LEARN MORE
           </button>
         </motion.div>

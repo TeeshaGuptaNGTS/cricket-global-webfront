@@ -44,7 +44,7 @@ const Care1 = () => {
   return (
     <section className="bg-[#f8faff] text-[#0d0d36] px-4 sm:px-6 md:px-16 lg:px-16 py-10">
       {/* Heading */}
-      <h2 className="text-center text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold tracking-wider mb-9">
+      <h2 className="text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-wider mb-9">
         CLG CARES - OUR CSR INITIATIVES
       </h2>
 
@@ -68,7 +68,7 @@ const Care1 = () => {
         {/* Image Slider */}
         <div className="relative w-full overflow-hidden rounded-lg shadow-lg mx-auto ">
           <Slider {...settings}>
-            {[Imgmembership.imgPassion1, Imgmembership.imgPassion4].map((img, idx) => (
+            {[Imgmembership.imgcare1, Imgmembership.imgcare2,Imgmembership.imgcare3,Imgmembership.imgcare5].map((img, idx) => (
               <div key={idx}>
                 <Image
                   src={img}
@@ -84,7 +84,7 @@ const Care1 = () => {
 
         {/* Text */}
         <div className="text-left mt-4 md:mt-0 px-2 md:px-0">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-semibold uppercase leading-tight text-[#0d0d36] mb-4">
+          <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold uppercase leading-tight text-[#0d0d36] mb-4">
             Supporting kids<br />at an<br />orphanage in<br />India
           </h3>
           <p className="text-[#70757c] text-sm sm:text-base md:text-md lg:text-lg leading-relaxed max-w-xl">

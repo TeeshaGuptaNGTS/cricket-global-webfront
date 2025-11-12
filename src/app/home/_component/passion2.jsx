@@ -1,16 +1,18 @@
 "use client";
 
 import React from "react";
-import { homepage } from "@/shared/images";
+import { homepageposter } from "@/shared/images";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 
 const Passion2 = () => {
+  const router = useRouter();
   const cards = [
-  { Img: homepage[0], title: "Enjoy Cricket Matches Together" },
-  { Img: homepage[1], title: "Interact With Cricket Enthusiasts Worldwide" },
-  { Img: homepage[2], title: "Meet Cricket Icons" },
-  { Img: homepage[0], title: "Join The Community" }, // reuse first image
+  { Img: homepageposter[0], title: "Enjoy Cricket Matches Together" },
+  { Img: homepageposter[1], title: "Interact With Cricket Enthusiasts Worldwide" },
+  { Img: homepageposter[2], title: "Meet Cricket Icons" },
+  { Img: homepageposter[3], title: "Join The Community" }, // reuse first image
 ];
 
 
@@ -37,7 +39,7 @@ const Passion2 = () => {
 
       {/* Button */}
       <div className="mt-12">
-        <button className="bg-[#00B140] text-white font-semibold px-10 py-3 rounded-full hover:bg-[#009c38] transition-all duration-300 cursor-pointer">
+        <button onClick={() => router.push("/signup")} className="bg-[#00B140] text-white font-semibold px-10 py-3 rounded-full hover:bg-[#009c38] transition-all duration-300 cursor-pointer">
           SIGN UP TODAY
         </button>
       </div>

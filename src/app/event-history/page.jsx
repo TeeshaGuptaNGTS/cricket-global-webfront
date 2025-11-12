@@ -2,182 +2,160 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import authInstance from "@/api/auth/auth.api";
-import { getTokenLocal } from "@/utils/localStorage.util";
 
-const EventHistory = () => {
+export default function EventHistory() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const token = getTokenLocal();
 
   useEffect(() => {
-    const fetchEventHistory = async () => {
-      try {
-        setLoading(true);
-        const res = await authInstance.getEventHistory();
-        console.log("Event history response:", res);
-
-        if (res?.data) {
-          setEvents(res.data);
-        } else {
-          setEvents([]);
-        }
-      } catch (err) {
-        console.error("Error fetching event history:", err);
-        setError("Failed to load event history.");
-      } finally {
-        setLoading(false);
-      }
+    const load = async () => {
+      const res = await authInstance.getEventHistory();
+      setEvents(res?.data || []);
+      setLoading(false);
     };
-
-    fetchEventHistory();
-  }, [token]);
+    load();
+  }, []);
 
   if (loading)
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600">
-        Loading your event history...
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="min-h-screen flex justify-center items-center text-red-500">
-        {error}
-      </div>
-    );
-
-  if (!events.length)
-    return (
-      <div className="min-h-screen flex justify-center items-center text-gray-500">
-        No event history found.
+      <div className="min-h-screen flex justify-center items-center text-white">
+        Loading event history...
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-6">
-      <h2 className="text-2xl font-bold text-[#001B5E] mb-8 text-center">
+    <div className="min-h-screen bg-[#a9b2d2] py-10 px-5">
+      <h2 className="text-3xl font-bold text-center text-white drop-shadow-md mb-10">
         My Event History
       </h2>
 
-      <div className="max-w-5xl mx-auto space-y-6">
-        {events.map((item) => (
-          <div
-            key={item._id}
-            className="bg-white shadow-md rounded-2xl overflow-hidden border border-gray-200 hover:shadow-lg transition"
-          >
-            {/* Event Banner */}
-            <div className="relative h-56 w-full">
-              <Image
-                src={item?.event?.bannerImage}
-                alt={item?.event?.title}
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute top-0 left-0 bg-black/50 text-white px-4 py-1 rounded-br-xl text-sm">
-                {item.event.category}
-              </div>
-            </div>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {events.map((item) => (
+    <div 
+      key={item._id}
+      className="relative bg-[#243b80] rounded-2xl shadow-xl border border-[#1E2A55] overflow-hidden 
+                 transform hover:scale-[1.02] transition duration-300
+                 hover:shadow-[0_0_35px_#00E67655]"
+    >
 
-            {/* Event Info */}
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {item.event.title}
-                </h3>
-                <span
-                  className={`px-3 py-1 text-sm font-medium rounded-full ${
-                    item.payment.status === "paid"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {item.payment.status.toUpperCase()}
-                </span>
-              </div>
+  {/* TICKET CUT DESIGN */}
+  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0A1128] rounded-full shadow-inner"></div>
+  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0A1128] rounded-full shadow-inner"></div>
 
-              <p className="text-gray-600 mt-2">{item.event.venue}</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {new Date(item.event.startDate).toLocaleString()} –{" "}
-                {new Date(item.event.endDate).toLocaleString()}
-              </p>
+  {/* STADIUM SPOTLIGHT EFFECT */}
+  <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute top-0 left-1/4 w-40 h-40 bg-gradient-to-b from-blue-300/20 to-transparent blur-2xl rotate-45"></div>
+    <div className="absolute top-0 right-1/4 w-40 h-40 bg-gradient-to-b from-blue-300/20 to-transparent blur-2xl -rotate-45"></div>
+  </div>
 
-              {/* Ticket Info */}
-              <div className="mt-5 border-t border-gray-200 pt-4">
-                <h4 className="text-lg font-medium text-gray-800 mb-2">
-                  Ticket Details
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                  <p>
-                    <span className="font-semibold">Type:</span>{" "}
-                    {item.ticket.type}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Quantity:</span>{" "}
-                    {item.ticket.quantity}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Unit Price:</span> ₹
-                    {item.ticket.unitPrice}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Total Ticket Price:</span> ₹
-                    {item.payment.totalTicketPrice}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Product Add-ons:</span> ₹
-                    {item.payment.totalProductPrice}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Grand Total:</span> ₹
-                    {item.payment.totalAmount}
-                  </p>
-                </div>
-              </div>
+  {/* Banner Section */}
+  <div className="relative h-40 sm:h-48 w-full overflow-hidden">
 
-              {/* Product Info */}
-              {item.product && (
-                <div className="mt-5 border-t border-gray-200 pt-4">
-                  <h4 className="text-lg font-medium text-gray-800 mb-2">
-                    Product Add-ons
-                  </h4>
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-20 h-20 rounded-md overflow-hidden">
-                      <Image
-                        src={item.product.coverImage}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="text-sm">
-                      <p className="font-semibold text-gray-700">
-                        {item.product.name}
-                      </p>
-                      <p className="text-gray-500">
-                        ₹{item.product.unitPrice} × {item.product.quantity} = ₹
-                        {item.product.total}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+    {/* {console.log("banner image-----",item.event.bannerImage)}; */}
 
-              {/* Purchase Info */}
-              <div className="mt-5 border-t border-gray-200 pt-4 text-sm text-gray-600">
-                <p>
-                  <span className="font-semibold">Purchased On:</span>{" "}
-                  {new Date(item.createdAt).toLocaleString()}
-                </p>
-              </div>
-            </div>
+    <img
+    
+      src={item.event.bannerImage}
+      
+      alt="Event"
+      fill
+      className="object-cover opacity-90 transition-all duration-500 hover:scale-105"
+    />
+
+    {/* CATEGORY BADGE — GLOW */}
+    <span className="absolute top-4 left-4 px-4 py-1 rounded-full text-xs font-bold 
+                    bg-[#00E676] text-black shadow-[0_0_10px_#00E676]">
+      {item.event.category}
+    </span>
+
+    {/* STATUS BADGE — GLOW */}
+    <span
+      className={`absolute top-4 right-4 px-4 py-1 rounded-full text-xs font-bold shadow-lg
+        ${
+          item.payment.status === "paid"
+            ? "bg-[#00E676] text-black shadow-[0_0_12px_#00E676]"
+            : "bg-red-500 text-white shadow-[0_0_10px_red]"
+        }`}
+    >
+      {item.payment.status.toUpperCase()}
+    </span>
+
+    {/* DARK GRADIENT --> FOR TEXT READABILITY */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1A3C] via-transparent to-transparent"></div>
+  </div>
+
+  {/* Content Section */}
+  <div className="p-4 text-gray-200 space-y-4
+">
+
+    {/* Title + Venue */}
+    <div>
+      <h3 className="text-2xl font-extrabold text-white drop-shadow-[0_0_5px_#00E676]">
+        {item.event.title}
+      </h3>
+      <p className="text-gray-300 mt-1">{item.event.venue}</p>
+      <p className="text-gray-300 text-sm">
+        {new Date(item.event.startDate).toLocaleString()} –{" "}
+        {new Date(item.event.endDate).toLocaleString()}
+      </p>
+    </div>
+
+    {/* Ticket Info */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+
+      <h4 className="text-lg font-semibold text-[#00E676] mb-2 drop-shadow-[0_0_6px_#00E676aa]">
+        Ticket Details
+      </h4>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+        <p><span className="font-semibold text-white">Type:</span> {item.ticket.type}</p>
+        <p><span className="font-semibold text-white">Qty:</span> {item.ticket.quantity}</p>
+        <p><span className="font-semibold text-white">Unit Price:</span> ₹{item.ticket.unitPrice}</p>
+        <p><span className="font-semibold text-white">Ticket Total:</span> ₹{item.payment.totalTicketPrice}</p>
+        <p><span className="font-semibold text-white">Add-ons:</span> ₹{item.payment.totalProductPrice}</p>
+        <p><span className="font-semibold text-white">Grand Total:</span> ₹{item.payment.totalAmount}</p>
+      </div>
+    </div>
+
+    {/* Product Add-ons */}
+    {item.product && (
+      <div className="border-t border-[#1E2A55] pt-4">
+        <h4 className="text-lg font-semibold text-[#00E676] mb-3 drop-shadow-[0_0_6px_#00E676]">
+          Product Add-ons
+        </h4>
+
+        <div className="flex items-center gap-6">
+          <div className="relative w-20 h-20 rounded-lg overflow-hidden shadow-[0_0_12px_#00E67688] border border-[#00E676]">
+            <Image
+              src={item.product.coverImage}
+              alt="Product"
+              fill
+              className="object-cover"
+            />
           </div>
+          <div className="text-sm">
+            <p className="text-white font-semibold">{item.product.name}</p>
+            <p className="text-gray-400">
+              ₹{item.product.unitPrice} × {item.product.quantity} = ₹
+              {item.product.total}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Footer */}
+    <div className="border-t border-[#1E2A55] pt-4 text-sm text-gray-400">
+      Purchased On:
+      <span className="text-white">
+        {new Date(item.createdAt).toLocaleString()}
+      </span>
+    </div>
+  </div>
+</div>
+
         ))}
       </div>
     </div>
   );
-};
-
-export default EventHistory;
+}

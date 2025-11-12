@@ -1,58 +1,40 @@
-// import Cookies from "js-cookie";
-// // import { useState } from "react";
-// // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-// export const getTokenLocal = () => {
-//   return localStorage.getItem("token");
-// };
-
-// export const getUserLocal = () => {
-//   const user = localStorage.getItem("x_ufo");
-
-//   if (user !== null && user !== undefined) {
-//     return JSON.parse(user);
-//     // setIsLoggedIn(true);
-//   } else {
-//     return null;
-//     // setIsLoggedIn(false);
-//   }
-// };
-
-// export const setTokenLocal = (token) => {
-//   localStorage.setItem("token", token);
-// };
-
-
-
-// export const setUserLocal = (user) => {
-//   console.log("sdsd")
-//   localStorage.setItem("x_ufo", JSON.stringify(user), { expires: 30 });
-// };
 import Cookies from "js-cookie";
 
+// Get token from cookies
 export const getTokenLocal = () => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("token");
+    return Cookies.get("token") || null;
   }
   return null;
 };
 
+//  Get user from localStorage
 export const getUserLocal = () => {
   if (typeof window !== "undefined") {
-    const user = localStorage.getItem("x_ufo");
+    const user = Cookies.get("x_ufo");
     return user ? JSON.parse(user) : null;
   }
   return null;
 };
 
+//  Save token in cookies with expiry
 export const setTokenLocal = (token) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7 });  // 7 days
   }
 };
 
+//  Save user in localStorage
 export const setUserLocal = (user) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("x_ufo", JSON.stringify(user));
+    Cookies.set("x_ufo", JSON.stringify(user));
+  }
+};
+
+//  Remove everything for logout
+export const clearAuthLocal = () => {
+  if (typeof window !== "undefined") {
+    Cookies.remove("token");
+    Cookies.remove("x_ufo");
   }
 };
