@@ -228,78 +228,92 @@ export default function PricingSection() {
         </h2>
       </div>
 
-      {/* Dynamic Plans Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-10">
-        
-        {plans.map((plan, index) => (
-          <div
-            key={plan._id}
-            className="bg-white rounded-2xl shadow hover:shadow-lg border border-gray-200 overflow-hidden hover:scale-[1.02] transition-all duration-300"
-          >
-            {/* Image */}
-            <div className="relative h-[220px] w-full">
-              
+      
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10">
+          {plans.map((plan) => (
+            <div
+              key={plan._id}
+              className="bg-white rounded-2xl shadow hover:shadow-lg border border-gray-200 hover:scale-[1.02] transition-all duration-300 overflow-hidden"
+            >
+              {/* Image */}
+             
+              <div className="relative h-[300px] w-full bg-white rounded-2xl overflow-hidden border">
+  {/* 🔥 Recommended Badge */}
+  {plan.name === "Lifetime Family Membership" && (
+    <span className="absolute top-3 left-3 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-20">
+      Recommended
+    </span>
+  )}
+  
+  {plan?.coverImage ? (
+    <Image
+      src={plan.coverImage}
+      alt={plan.name}
+      fill
+      className="object-cover object-top rounded-2xl"
+      sizes="(max-width: 768px) 100vw, 33vw"
+      priority
+    />
+  ) : (
+    <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+      No Image Available
+    </div>
+  )}
+</div>
+
+
+              {/* Content */}
+              <div className="p-6 space-y-3">
+                <p className="text-sm flex items-center gap-1 text-gray-600">
+                  <User size={16} />
+                  BUY{" "}
+                  <span className="font-bold text-green-600">
+                    £{plan.price || "0.00"}
+                  </span>
+                </p>
+
+                <h3 className="text-2xl font-bold text-[#0b1441] leading-tight">
+                  {plan.name}
+                </h3>
+
+                <p className="text-sm text-gray-600 line-clamp-3 min-h-[60px]">
+                  {plan.description || "No description available."}
+                </p>
+
+                <button
+                  onClick={() => router.push(`/membership/${plan?._id}`)}
+                  className="mt-4 text-[#22c55e] font-semibold flex items-center gap-1 hover:underline transition cursor-pointer"
+                >
+                  GET STARTED <ArrowUpRight size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="bg-white border border-gray-300 rounded-2xl shadow p-10 text-center flex flex-col justify-center">
+            <h3 className="text-3xl font-bold mb-4">LIMITED OFFER</h3>
+            <p className="text-red-600 font-semibold mb-2">
+              FREE ACCOUNT VIA RIBBON
+            </p>
+
+            <div className="flex justify-center my-6">
               <Image
-                 src={plan?.coverImage}  
-                alt={plan?.name}
-                fill
-                className="object-cover"
+                src={Imgmembership.imgRibbon}
+                alt="Ribbon Logo"
+                width={200}
+                height={70}
               />
             </div>
 
-            {/* Content */}
-            <div className="p-6 space-y-3">
-              <p className="text-sm flex items-center gap-1 text-gray-600">
-                <User size={16} /> BUY
-                <span className="font-bold text-green-600">£{plan.price}</span>
-              </p>
+            <p className="text-gray-700 text-sm font-medium leading-relaxed mb-6">
+              FREE WITH RIBBON GLOBAL MULTI-CURRENCY ACCOUNT
+            </p>
 
-              <h3 className="text-2xl font-bold text-[#0b1441] leading-tight">
-                {plan.name}
-              </h3>
-
-              <p className="text-sm text-gray-600 line-clamp-3">
-                {plan.description}
-              </p>
-
-              {/* Dynamic GET STARTED */}
-              <button
-                onClick={() =>
-                  router.push(`/membership/${plan?._id}`)
-                }
-                className="mt-4 text-[#22c55e] font-semibold flex items-center gap-1 hover:underline transition cursor-pointer"
-              >
-                GET STARTED <ArrowUpRight size={18} />
-              </button>
-            </div>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-xl flex items-center mx-auto gap-2 transition cursor-pointer">
+              SIGNUP <ArrowUpRight size={18} />
+            </button>
           </div>
-        ))}
-
-        {/* Extra Special Offer Box */}
-        <div className="bg-white border border-gray-300 rounded-2xl shadow p-10 text-center flex flex-col justify-center">
-          <h3 className="text-3xl font-bold mb-4">LIMITED OFFER</h3>
-          <p className="text-red-600 font-semibold mb-2">
-            FREE ACCOUNT VIA RIBBON
-          </p>
-
-          <div className="flex justify-center my-6">
-            <Image
-              src={Imgmembership.imgRibbon}
-              alt="Ribbon Logo"
-              width={200}
-              height={70}
-            />
-          </div>
-
-          <p className="text-gray-700 text-sm font-medium leading-relaxed mb-6">
-            FREE WITH RIBBON GLOBAL MULTI-CURRENCY ACCOUNT
-          </p>
-
-          <button className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-xl flex items-center mx-auto gap-2 transition cursor-pointer">
-            SIGNUP <ArrowUpRight size={18} />
-          </button>
         </div>
-      </div>
     </section>
   );
 }

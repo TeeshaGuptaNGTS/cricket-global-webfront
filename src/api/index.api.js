@@ -38,7 +38,7 @@ export class HttpClient {
   _initializeRequestInterceptor = () => {
     this.instance.interceptors.request.use((config) => {
       const token = getTokenLocal(); // ✅ get token from localStorage
-
+      console.log("token----------------",token)
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }

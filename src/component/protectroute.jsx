@@ -9,9 +9,9 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const token = Cookies.get("token");
 
-    if (!token) {
-      router.push("/login");
-    }
+    // if (!token) {
+    //   router.push("/login");
+    // }
   }, []);
 
   return <>{children}</>;

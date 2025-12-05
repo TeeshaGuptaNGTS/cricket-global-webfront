@@ -20,13 +20,27 @@ export const userSlice = createSlice({
       setUserLocal(action.payload);
       state.userInfo = action.payload;
     },
+
     updateToken: (state, action) => {
       setTokenLocal(action.payload);
       state.token = action.payload;
     },
+
     updateAllUser: (state, action) => {
       state.usersList = action.payload;
     },
+
+    // ⭐ NEW — Update membership status
+    updateMembershipStatus: (state, action) => {
+      const updatedUser = {
+        ...state.userInfo,
+        showMembership: action.payload, // true or false
+      };
+
+      setUserLocal(updatedUser);
+      state.userInfo = updatedUser;
+    },
+
     logout: (state) => {
       setUserLocal(null);
       setTokenLocal(null);
@@ -36,7 +50,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { updateUser, updateToken, updateAllUser, logout } =
-  userSlice.actions;
+export const {
+  updateUser,
+  updateToken,
+  updateAllUser,
+  updateMembershipStatus,
+  logout,
+} = userSlice.actions;
 
 export default userSlice.reducer;

@@ -22,9 +22,10 @@ const EventPage = () => {
 
   const [filterType, setFilterType] = useState("all");
   const [searchText, setSearchText] = useState("");
-  const [page] = useState(1);
+  const [page ,setPage] = useState(1);
   const [events, setEvents] = useState([]);
   const [current, setCurrent] = useState(0);
+  const [allEvents, setAllEvents] = useState([]);
 
   const nextSlide = () => setCurrent((current + 1) % events.length);
   const prevSlide = () =>
@@ -46,23 +47,23 @@ const EventPage = () => {
     return () => clearInterval(interval);
   }, [sliderEvents]);
 
-  const fetchEvents = async (searchValue = "") => {
+  const fetchEvents = async (searchValue = "",PageNumber=page) => {
     try {
       if (searchValue === "") searchValue = searchText;
 
       const res = await eventApi.getAllEvents({
-        page,
+        page: PageNumber,
         limit: 10,
         search: searchValue,
       });
 
       if (res?.status.toLowerCase() !== "success")
-        return alert(res?.message || "Something went wrong ❌");
+        return toast.error(res?.message || "Something went wrong ");
 
       setEvents(res.data);
       // new logic
       //  Show all events in grid
-      setEvents(res.data);
+      setAllEvents(res.data);
 
       //  Filter only first 4 upcoming for slider
       const today = new Date();
@@ -91,14 +92,28 @@ const EventPage = () => {
     setFilterType(value);
     const filtered =
       value === "free"
-        ? events.filter((event) => event.eventType?.toLowerCase() !== "paid")
+        ? allEvents.filter((event) => event.eventType?.toLowerCase() !== "paid")
         : value === "paid"
-        ? events.filter((event) => event.eventType?.toLowerCase() === "paid")
-        : events;
+        ? allEvents.filter((event) => event.eventType?.toLowerCase() === "paid")
+        : allEvents;
 
     setEvents(filtered);
   };
+  
   console.log("image-------", events[current]?.bannerImage);
+  const handleNextPage = () => {
+  const next = page + 1;
+  setPage(next);
+  fetchEvents(searchText, next);
+};
+
+const handlePrevPage = () => {
+  if (page === 1) return;
+  const prev = page - 1;
+  setPage(prev);
+  fetchEvents(searchText, prev);
+};
+
 
   return (
     <section className="min-h-full bg-white px-4 md:px-16 py-10 text-gray-800 relative">
@@ -123,15 +138,17 @@ const EventPage = () => {
                 </p>
 
                 <p className="text-lg font-semibold mb-6 flex gap-2 flex-wrap">
-  {sliderEvents[current]?.tickets?.length > 0 ? (
-    sliderEvents[current].tickets
-      .map((t) => `${t.type.charAt(0).toUpperCase() + t.type.slice(1)} €${t.price}`)
-      .join(" • ")
-  ) : (
-    "Free Entry"
-  )}
-</p>
-
+                  {sliderEvents[current]?.tickets?.length > 0
+                    ? sliderEvents[current].tickets
+                        .map(
+                          (t) =>
+                            `${
+                              t.type.charAt(0).toUpperCase() + t.type.slice(1)
+                            } €${t.price}`
+                        )
+                        .join(" • ")
+                    : "Free Entry"}
+                </p>
 
                 <button
                   onClick={() =>
@@ -211,19 +228,20 @@ const EventPage = () => {
       {/*  Filters & Calendar */}
       <div className="flex items-center justify-between mt-6 border-b border-gray-300 pb-2 relative">
         <div className="flex items-center gap-4">
-          <button className="p-1 rounded-full hover:bg-gray-100">
+          <button className="p-1 rounded-full hover:bg-gray-100" onClick={handlePrevPage}>
             <ChevronLeft size={20} />
           </button>
-          <button className="p-1 rounded-full hover:bg-gray-100">
+          <button className="p-1 rounded-full hover:bg-gray-100" onClick={handleNextPage}>
             <ChevronRight size={20} />
           </button>
 
           <select
-            className="bg-green-600 hover:bg-green-700 text-white px-2 py-2  rounded-md text-sm md:text-base transition cursor-pointer"
+            className="bg-green-600 hover:bg-green-700 text-white px-2 py-2  rounded-md text-sm md:text-base transition cursor-pointer text-center  "
             value={filterType}
             onChange={(e) => handleFilterChange(e.target.value)}
           >
-            <option value="all">Filter -</option>
+            <option value="">Filter:-</option>
+            <option value="all">All</option>
             <option value="free">Free Entry</option>
             <option value="paid">Paid Entry</option>
           </select>
@@ -234,10 +252,10 @@ const EventPage = () => {
           onClick={() => setShowCalendar(!showCalendar)}
         >
           <h2 className="text-xl md:text-2xl sm:m font-semibold">Upcoming</h2>
-          <CalendarDays size={20} className="text-gray-600" />
+          {/* <CalendarDays size={20} className="text-gray-600" />
           <span className="text-gray-500 text-lg">
             {showCalendar ? "▴" : "▾"}
-          </span>
+          </span> */}
 
           {showCalendar && (
             <div className="absolute top-10 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2">
@@ -257,7 +275,7 @@ const EventPage = () => {
                 [...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className="bg-gray-200 animate-pulse rounded-2xl h-80"
+                    className="bg-gray-300 animate-pulse rounded-2xl h-80"
                   ></div>
                 ))
               : events.map((event) => (
@@ -274,7 +292,7 @@ const EventPage = () => {
                           "/placeholder.png"
                         }
                         alt={event.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                        className="w-full h-full object-cover group-hover:scale-100 transition duration-300"
                       />
                     </div>
 
@@ -290,17 +308,17 @@ const EventPage = () => {
                       <p className="text-gray-500 text-sm">{event.venue}</p>
 
                       <div className="mt-2 text-gray-900 font-semibold text-[15px]">
-  {event?.tickets?.length > 0 ? (
-    event.tickets.map((t, i) => (
-      <p key={i}>
-        {t.type.charAt(0).toUpperCase() + t.type.slice(1)}: €{t.price}
-      </p>
-    ))
-  ) : (
-    <p>Free Entry</p>
-  )}
-</div>
-
+                        {event?.tickets?.length > 0 ? (
+                          event.tickets.map((t, i) => (
+                            <p key={i}>
+                              {t.type.charAt(0).toUpperCase() + t.type.slice(1)}
+                              : €{t.price}
+                            </p>
+                          ))
+                        ) : (
+                          <p>Free Entry</p>
+                        )}
+                      </div>
 
                       {/* 🎟️ Buy Button Fixed Bottom */}
                       <button

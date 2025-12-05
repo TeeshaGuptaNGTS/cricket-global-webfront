@@ -1,9 +1,18 @@
 "use client"
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const Aboutpage = () => {
     const router = useRouter();
+    const getToken = useSelector((state) => state?.user?.token);
+    const [hide, setHide] = useState(true);
+    console.log("about page token",getToken);
+    useEffect(()=>{
+      if(getToken){
+       setHide(false);
+      }
+    })
   
   return (
     <section className="bg-[#f5f7fc] text-[#1a1a40] py-8 px-6 md:px-16 lg:px-32 text-center">
@@ -37,11 +46,11 @@ const Aboutpage = () => {
       </div>
 
       {/* Button */}
-      <div className="mt-10">
+      {hide && <div className="mt-10">
         <button onClick={() => router.push("/signup")} className="bg-green-600 hover:bg-white hover:text-green-400 hover:border-2 hover:border-green-400 text-white font-semibold px-10 py-3 rounded-full shadow-md transition-all duration-200">
           SIGN UP
         </button>
-      </div>
+      </div>}
     </section>
   );
 };

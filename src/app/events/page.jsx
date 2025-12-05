@@ -1,14 +1,15 @@
 import React from 'react';
-import EventList from './_component/events1';
-import EventPage from './_component/events2';
 import News from '../home/_component/news';
 import ProtectedRoute from '@/component/protectroute';
+import EventPage from './_component/events1';
+import EventList from './_component/events2';
 
 
 function Event() {
     return (
         <ProtectedRoute>
-            <EventList/>
+            {/* <EventList/> */}
+            <EventPage />
             <News/>
             </ProtectedRoute>
            

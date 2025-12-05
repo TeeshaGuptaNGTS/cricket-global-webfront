@@ -8,11 +8,13 @@ import membershipApi from "@/api/membership.api";
 import { useEffect, useState } from "react";
 import { htmlTostring } from "@/utils/htmlTostring";
 import { toast } from "react-toastify";
+import { getTokenLocal, getUserLocal } from "@/utils/localStorage.util";
 
 export default function MembershipDetailsPage() {
   const router = useRouter();
   const [plans, setPlans] = useState([]);
   const { id } = useParams();
+  const userData = getUserLocal();
 
   // api integerate start
   const fetchPlans = async () => {
@@ -32,10 +34,15 @@ export default function MembershipDetailsPage() {
     fetchPlans();
   }, [id]);
   // payment stripe link
-  const handlePayment = async (plan) => {
+  const handlePayment = async () => {
+    if (!userData) {
+      localStorage.setItem('payment', true);
+      router.push("/signup");
+      return
+    }
     try {
       const payload = {
-        planId: plan._id,
+        planId: id,
       };
 
       const res = await membershipApi.createMembershipPayment(payload);
@@ -45,13 +52,37 @@ export default function MembershipDetailsPage() {
         return toast.error(res?.message || "Payment failed ❌");
       }
       console.log("url------", res.data.url);
-
+      localStorage.clear('payment')
       window.location.href = res.data;
     } catch (error) {
       console.log("Payment Error:", error);
       toast.error("Something went wrong ❌");
     }
   };
+
+  useEffect(() => {
+
+    if (id) {
+      if (localStorage.getItem('payment') && userData) {
+        handlePayment()
+      }
+    }
+
+  }, [userData, id])
+
+// require login
+const requireLogin = (callback) => {
+  const token = getTokenLocal();
+
+  if (!token) {
+    toast("Please login to continue.");
+    window.location.href = "/login";
+    return;
+  }
+
+  callback(); // If logged in → run the action
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 md:px-10 lg:px-20 py-10">
@@ -66,8 +97,8 @@ export default function MembershipDetailsPage() {
       {/* BANNER */}
       <div className="relative w-full h-[280px] md:h-[360px] lg:h-[420px] rounded-3xl overflow-hidden shadow">
         <Image
-        src={plans?.coverImage} 
-        //   src={Imgmembership.imgPassion1}
+          src={plans?.coverImage}
+          //   src={Imgmembership.imgPassion1}
           alt="Platinum Membership"
           fill
           className="object-cover"
@@ -93,33 +124,34 @@ export default function MembershipDetailsPage() {
         {/* Description */}
         <p> {htmlTostring(plans?.description)}</p>
 
-        <h2 className="text-2xl font-bold mt-10 mb-4">Membership Benefits</h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">Membership Benefits </h2>
 
         {/* BENEFITS LIST */}
         <div className="grid sm:grid-cols-2 gap-4">
-          {plans?.benefits?.map((benefit, i) => (
+          {plans?.benefit?.map((item, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="text-green-600 mt-1" size={22} />
-              <p className="text-gray-700 leading-tight">{benefit}</p>
+              <p className="text-gray-700 leading-tight">{item}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-10 text-center">
           <button
-            onClick={() => handlePayment(plans)}
-            className="
-      bg-green-600 hover:bg-green-700 text-white 
-      px-6 py-3 text-base      
-      sm:px-10 sm:py-4 sm:text-lg  
-      font-bold 
-      rounded-xl shadow-lg 
-      transition cursor-pointer
-      w-[85%] sm:w-auto       
-    "
-          >
-            {plans?.name}
-          </button>
+  onClick={() => requireLogin(() => handlePayment(id))}
+  className="
+    bg-green-600 hover:bg-green-700 text-white 
+    px-6 py-3 text-base      
+    sm:px-10 sm:py-4 sm:text-lg  
+    font-bold 
+    rounded-xl shadow-lg 
+    transition cursor-pointer
+    w-[85%] sm:w-auto       
+  "
+>
+  {plans?.name}
+</button>
+
         </div>
       </div>
     </div>

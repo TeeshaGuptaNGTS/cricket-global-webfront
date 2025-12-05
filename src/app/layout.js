@@ -25,30 +25,30 @@ const geistMono = Geist_Mono({
 //   title: "CRICKET LOVERS GLOBAL",
 //   description: "Your app description",
 //   icons: {
-//     icon: "/favicon.ico",   // or /favicon.png
+//     icon: "/favicon.webp",   // or /favicon.png
 //   },
 // };
 
-
-
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const hideNavFooter = pathname === "/login" || pathname === "/signup" || pathname==="/success" ;
+  const hideNavFooter =
+    pathname === "/login" || pathname === "/signup" || pathname === "/success";
   return (
-    
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      > {!hideNavFooter && <Navbar/>}
-      <main>
-     <Provider store={store}>{children}</Provider>
-     <ToastContainer  position="top-right" autoClose={3000}></ToastContainer>
-     </main>
-       {!hideNavFooter && <Footer />}
-
-       
+      >
+        {" "}
+        {!hideNavFooter && <Navbar />}
+        <main>
+          <Provider store={store}>{children}</Provider>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+          ></ToastContainer>
+        </main>
+        {!hideNavFooter && <Footer />}
       </body>
     </html>
   );
 }
-

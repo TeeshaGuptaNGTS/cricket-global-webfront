@@ -16,7 +16,7 @@ const Gallery2 = () => {
          Video Gallery
        </h2>
 
-       <div className="flex flex-col items-center space-y-8">
+       {/* <div className="flex flex-col items-center space-y-8">
          {videos.map((video, index) => (
          <video
              key={index}
@@ -25,7 +25,7 @@ const Gallery2 = () => {
             className="w-full max-w-5xl rounded-2xl shadow-lg"
          />
         ))}
-      </div>
+      </div> */}
     </section>
 
 //     <section className="bg-[#f4f4f4] py-10 px-4">

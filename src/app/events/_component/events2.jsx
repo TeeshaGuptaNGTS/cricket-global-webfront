@@ -107,6 +107,7 @@ import { ChevronLeft, ChevronRight, Search, CalendarDays } from "lucide-react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import eventApi from "@/api/events.api";
+import { toast } from "react-toastify";
 
 const EventList = () => {
   const [showCalendar, setShowCalendar] = useState(false);
@@ -168,7 +169,7 @@ const fetchEvents= async (searchValue = "")=>{
     const res = await eventApi.getAllEvents({ page: page, limit: 10, search: searchValue});
     
 
-    if (res?.status.toLowerCase() != "success") return alert(res?.message || "Something went wrong, please try again later❌");
+    if (res?.status.toLowerCase() != "success") return toast.error(res?.message || "Something went wrong, please try again later❌");
     const currentEvent=res.data
     
     for(let i=0 ;i<currentEvent.length;i++){
@@ -182,7 +183,7 @@ const fetchEvents= async (searchValue = "")=>{
     applyFilters(currentEvent)
   } catch(error) {
     console.log("Error fetching events:", error);
-        alert("Something went wrong ❌");
+        toast.error("Something went wrong");
   }
 }
 
@@ -198,7 +199,8 @@ const applyFilters = (eventsList, ftype) => {
   } else if (ftype === "paid") {
     updatedEvents = updatedEvents.filter(event => event.eventType.toLowerCase() === "paid");
   }
-  setFilteredEvents(updatedEvents);
+  // setFilteredEvents(updatedEvents);
+  setEvents(updatedEvents)
 }
 const handleSearch = (e) => {
   const value = e.target.value;
@@ -251,11 +253,12 @@ const handleSearch = (e) => {
 
           {/* ✅ Filter Dropdown */}
           <select
-            className="border px-3 py-1 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+            className="bg-green-600 hover:bg-green-700 text-white px-2 py-2  rounded-md text-sm md:text-base transition cursor-pointer text-center  "
             value={filterType}
             onChange={(e) => handleFilterChange(e.target.value)}
           >
-            <option value="all">All Entry</option>
+            <option value="">Filter:-</option>
+            <option value="all">All</option>
             <option value="free">Free Entry</option>
             <option value="paid">Paid Entry</option>
           </select>

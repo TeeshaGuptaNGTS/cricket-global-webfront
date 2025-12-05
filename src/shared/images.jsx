@@ -84,7 +84,20 @@ import home12 from "../../public/assets/Home/home12.webp";
 import home13 from "../../public/assets/Home/home13.webp";
 import home14 from "../../public/assets/Home/home14.jpeg";
 import home15 from "../../public/assets/Home/home15.jpeg";
-
+import authorization from "../../public/assets/benefit/authorization.png";
+import bestemployee from "../../public/assets/benefit/bestemployee.png";
+import conversation from "../../public/assets/benefit/conversation.png";
+import deal from "../../public/assets/benefit/deal.png";
+import newsletter from "../../public/assets/benefit/newsletter.png";
+import premium from "../../public/assets/benefit/premium.png";
+import ticket from "../../public/assets/benefit/ticket.png";
+import tshirt from "../../public/assets/benefit/tshirt.png";
+import plus from "../../public/assets/benefit/plus.png";
+import giftcard from "../../public/assets/benefit/giftcard.png";
+import junior from "../../public/assets/benefit/junior.png";
+import success from "../../public/assets/benefit/success.png";
+import handshake from "../../public/assets/benefit/handshake.png";
+import addbutton from "../../public/assets/benefit/addbutton.png";
 export const logoimg = {
   logoImg: Logo,
   logobase: LogoBase,
@@ -190,4 +203,21 @@ export const gallery = [
   img48,
   img49,
 ];
+export const benfitIconImg = {
+  benfitIcon1: authorization,
+  benfitIcon2: bestemployee,
+  benfitIcon3: conversation,
+  benfitIcon4: deal,
+  benfitIcon5: newsletter,
+  benfitIcon6: premium,
+  benfitIcon7: ticket,
+  benfitIcon8: tshirt,
+  benfitIcon9: success,
+  benfitIcon10: giftcard,
+  benfitIcon11: junior,
+  benfitIcon12: addbutton,
+  benfitIcon13: handshake
+  
+}
+ 
 export const imagesmember = [Home1.src];

@@ -48,7 +48,6 @@ export default function MembershipDetailsPage() {
       if (!res || res?.status?.toLowerCase() !== "success") {
         return toast.error(res?.message || "Payment failed ❌");
       }
-      console.log("url------",res.data.url)
 
       window.location.href = res.data;
 
@@ -57,6 +56,20 @@ export default function MembershipDetailsPage() {
       toast.error("Something went wrong ❌");
     }
   };
+
+  // require login
+  const requireLogin = (callback) => {
+  const token = getTokenLocal();
+
+  if (!token) {
+    toast("Please login to continue.");
+    window.location.href = "/login";
+    return;
+  }
+
+  callback(); // user logged in → proceed
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 md:px-10 lg:px-20 py-10">
@@ -105,25 +118,27 @@ export default function MembershipDetailsPage() {
 
         {/* BENEFITS LIST */}
         <div className="grid sm:grid-cols-2 gap-4">
-          {[
-            "Priority access to international match tickets",
-            "Discounts on CLG merchandise",
-            "Invitation to exclusive CLG annual meets",
-            "Entry to junior members meets",
-            "Access to private members-only online events",
-            "Opportunity to meet cricket celebrities",
-            "Subscription to premium newsletter",
-            "Exclusive behind-the-scenes cricket content",
-          ].map((benefit, i) => (
+          {
+          //   [
+          //   "Priority access to international match tickets",
+          //   "Discounts on CLG merchandise",
+          //   "Invitation to exclusive CLG annual meets",
+          //   "Entry to junior members meets",
+          //   "Access to private members-only online events",
+          //   "Opportunity to meet cricket celebrities",
+          //   "Subscription to premium newsletter",
+          //   "Exclusive behind-the-scenes cricket content",
+          // ]
+          plans?.benefit.map((item, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="text-green-600 mt-1" size={22} />
-              <p className="text-gray-700 leading-tight">{benefit}</p>
+              <p className="text-gray-700 leading-tight">{item}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-10 text-center">
-  <button
+  {/* <button
     onClick={() => handlePayment(plans[0])}
     className="
       bg-green-600 hover:bg-green-700 text-white 
@@ -136,7 +151,22 @@ export default function MembershipDetailsPage() {
     "
   >
     Join Platinum Membership
-  </button>
+  </button> */}
+  <button
+  onClick={() => requireLogin(() => handlePayment(plans[0]))}
+  className="
+    bg-green-600 hover:bg-green-700 text-white 
+    px-6 py-3 text-base
+    sm:px-10 sm:py-4 sm:text-lg  
+    font-bold 
+    rounded-xl shadow-lg 
+    transition cursor-pointer
+    w-[85%] sm:w-auto
+  "
+>
+  Join Platinum Membership
+</button>
+
 </div>
 
 

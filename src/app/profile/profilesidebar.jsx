@@ -12,6 +12,7 @@ export default function ProfileSidebar() {
 
   const menu = [
     { label: "Profile", icon: <User size={18} />, href: "/profile" },
+    { label: "Membership plan", icon: <User size={18} />, href: "/profile/membership-history" },
     { label: "My Tickets", icon: <Ticket size={18} />, href: "/event-history" },
   ];
 
@@ -45,7 +46,7 @@ export default function ProfileSidebar() {
 
           <button
             onClick={() => logout(router)}
-            className="flex items-center gap-3 mt-10 p-3 rounded-xl text-red-500 hover:bg-red-50 transition"
+            className="flex items-center gap-3 p-3 rounded-xl text-red-500 hover:bg-red-50 transition"
           >
             <LogOut size={18} /> Logout
           </button>

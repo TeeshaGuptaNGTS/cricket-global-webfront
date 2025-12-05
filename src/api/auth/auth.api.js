@@ -70,7 +70,7 @@ class Auth extends HttpClient {
   };
   // forget password
 
-  forgetPass = async (reqBody) => {
+  forgetPassword = async (reqBody) => {
     return this.instance({
       method: ApiRoutes.auth.forget.Method,
       url: ApiRoutes.auth.forget.Endpoint,
@@ -102,6 +102,30 @@ class Auth extends HttpClient {
       data:""
     })
   }
+  newsletterSubscribe = async (reqBody) => {
+    return this.instance({
+      method: ApiRoutes.auth.newsletterSubscribe.Method,
+      url: ApiRoutes.auth.newsletterSubscribe.Endpoint,
+      data: reqBody,
+    });
+  }
+  
+  ContactUs = async (reqBody) => {
+    return this.instance({
+      method: ApiRoutes.auth.Contact.Method,
+      url: ApiRoutes.auth.Contact.Endpoint,
+      data: reqBody,
+    });
+  }
+  getUserMembershipStatus = async (reqBody) => {
+    return this.instance({
+      method: ApiRoutes.auth.getUserMembershipStatus.Method,
+      url: ApiRoutes.auth.getUserMembershipStatus.Endpoint,
+      data: reqBody,
+    });
+  }
+      
+  
   
 
 }

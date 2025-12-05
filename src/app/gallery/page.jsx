@@ -7,7 +7,7 @@ export default function Gallerypage (){
   return (
     <>
 <Gallery1/>
-<Gallery2/>
+{/* <Gallery2/> */}
 <News/> 
 </> )
 }

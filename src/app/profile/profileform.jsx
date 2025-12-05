@@ -90,7 +90,7 @@ export default function ProfileForm() {
                   },
                 })
               }
-              className="border border-gray-200 bg-gray-50 focus:bg-white 
+              className="w-full border border-gray-200 bg-gray-50 focus:bg-white 
               rounded-md px-3 py-2 shadow-sm 
               focus:ring-2 focus:ring-[#3E63DD] outline-none transition
               text-xs md:text-sm focus:scale-[1.03]"
@@ -116,7 +116,7 @@ export default function ProfileForm() {
       {/* Animated Button */}
       <button
         type="submit"
-        className="col-span-1 md:col-span-2 bg-[#3E63DD] hover:bg-[#2F4FCC] 
+        className="col-span-1 md:col-span-2 bg-[#00a63e] hover:bg-[#26b95c]
         text-white py-3 rounded-xl font-semibold w-full shadow-lg transition 
         active:scale-95 animate-fadeIn"
       >

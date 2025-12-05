@@ -13,10 +13,10 @@ export const logout = (router) => {
   Cookies.remove("x_auth_token");
 
   // Remove any saved user data
-  Cookies.removeItem("token");
-  Cookies.removeItem("x_ufo");
+  Cookies.remove("token");
+  // Cookies.removeItem("x_ufo");
 
-  // ✅ redirect to homepage
+  // redirect to homepage
   router.push("/");
 };
 

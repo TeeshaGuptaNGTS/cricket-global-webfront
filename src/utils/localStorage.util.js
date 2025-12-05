@@ -19,6 +19,7 @@ export const getUserLocal = () => {
 
 //  Save token in cookies with expiry
 export const setTokenLocal = (token) => {
+  console.log("Setting token in cookies:", token);
   if (typeof window !== "undefined") {
     Cookies.set("token", token, { expires: 7 });  // 7 days
   }

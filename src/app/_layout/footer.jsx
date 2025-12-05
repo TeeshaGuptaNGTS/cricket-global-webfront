@@ -42,11 +42,11 @@ const Footer = () => {
         <div className="">
           <h3 className="text-[22px] font-bold mb-2">Quick Links</h3>
           <ul className="space-y-2 text-[16px]">
-            <li><a href="/clg-about" className="!text-[#031036] !no-underline hover:no-underline">About</a></li>
-            <li><a href="/clg-gallery" className="!text-[#00175f] !no-underline hover:no-underline">Gallery</a></li>
-            <li><a href="clg-membership" className="!text-[#041f71] !no-underline hover:no-underline">Memberships</a></li>
-            <li><a href="clg-events" className="!text-[#00175f] !no-underline hover:no-underline">Events</a></li>
-            <li><a href="clg-academy" className="!text-[#00175f] !no-underline hover:no-underline">CLG Academy</a></li>
+            <li><a href="/about" className="!text-[#031036] !no-underline hover:no-underline">About</a></li>
+            <li><a href="/gallery" className="!text-[#00175f] !no-underline hover:no-underline">Gallery</a></li>
+            <li><a href="/membership" className="!text-[#041f71] !no-underline hover:no-underline">Memberships</a></li>
+            <li><a href="/events" className="!text-[#00175f] !no-underline hover:no-underline">Events</a></li>
+            <li><a href="/academy" className="!text-[#00175f] !no-underline hover:no-underline">CLG Academy</a></li>
           </ul>
         </div>
 
@@ -62,7 +62,7 @@ const Footer = () => {
             </a>
           </p>
           <p className="text-[16px]">
-            <a href="/clg-contact" className="!text-[#00175f] !no-underline hover:no-underline">
+            <a href="/contact" className="!text-[#00175f] !no-underline hover:no-underline">
               Contact us
             </a>
           </p>

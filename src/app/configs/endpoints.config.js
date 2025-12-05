@@ -1,3 +1,5 @@
+import { Contact } from "lucide-react";
+
 export const HttpMethod = {
     Get: "GET",
     Post: "POST",
@@ -17,7 +19,9 @@ const ApiRoutes = {
         updateProfile: { Method: HttpMethod.Patch, Endpoint: "/user/update-profile" },
         updateImage: { Method: HttpMethod.Post, Endpoint: "/upload" },
         eventHistory: { Method: HttpMethod.Get, Endpoint: "/user/event-history" },
-
+        newsletterSubscribe: { Method: HttpMethod.Post, Endpoint: "/user/newsletter-subscribe" },
+        Contact:{ Method: HttpMethod.Post, Endpoint: "/user/contact-us"},
+        getUserMembershipStatus: {  Method: HttpMethod.Get, Endpoint: "/user/membership-detail"}
     },
 
     payment: {

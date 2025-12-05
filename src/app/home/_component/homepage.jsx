@@ -3,12 +3,21 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { homepage1 } from "@/shared/images";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 
 const Home = () => {
   //   const images = [Home1, Home2];
   const [currentImage, setCurrentImage] = useState(0);
   const [fade, setFade] = useState(true);
+  const getToken = useSelector((state) => state?.user?.token);
+      const [hide, setHide] = useState(true);
+      console.log("about page token",getToken);
+      useEffect(()=>{
+        if(getToken){
+         setHide(false);
+        }
+      })
   const router = useRouter();
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,9 +93,9 @@ const Home = () => {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
           variants={item}
         >
-          <button onClick={() => router.push("/signup")} className="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-full cursor-pointer">
+          {hide &&<button onClick={() => router.push("/signup")} className="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-full cursor-pointer">
             SIGN UP NOW
-          </button>
+          </button>}
           <button onClick={() => router.push("/about")} className="border-2 border-white hover:bg-white hover:text-black font-semibold px-8 py-3 rounded-full transition-all cursor-pointer">
             LEARN MORE
           </button>

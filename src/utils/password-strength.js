@@ -1,7 +1,14 @@
 /**
  * Password validator for login pages
  */
-import value from 'assets/scss/_themes-vars.module.scss';
+const value = {
+  errorMain: "#dc2626",     // red-600
+  warningDark: "#d97706",   // amber-600
+  orangeMain: "#f97316",    // orange-500
+  successMain: "#16a34a",   // green-600
+  successDark: "#15803d",   // green-700
+};
+
 
 // has number
 const hasNumber = (number) => new RegExp(/[0-9]/).test(number);
@@ -32,3 +39,4 @@ export const strengthIndicator = (number) => {
     if (hasMixed(number)) strengths += 1;
     return strengths;
 };
+
